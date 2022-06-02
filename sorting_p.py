@@ -192,12 +192,11 @@ yes_to_copy = yes_no_input()      # Yes/No でコピーするか決めたい時,
 # 名前を変えたいファイルを探す
 # 全部のファイルのリストは既に持っている。
 # それは all_file_list である
-for org_file in all_file_list:   
-    # 辞書の中から、csvファイルのidnameのカラムに該当するファイルを探す
+for org_file in all_file_list:   #ファイルを総当たり
     for d_key, d_val in dict_name.items():  # 辞書内の YJxxxxx, YYmmddHHMM を総当たり
-        if d_key in org_file:      # YJxxxxx から YYmmddHHMM を探しあてる
-            new_file_base = d_val   # フォルダ作成のため YYmmddHHMM を保管
-            new_file = org_file.replace(d_key, d_val)   # YJxxxxx から YYmmddHHMM に置き換え
+        if d_key in org_file:       # パス(ファイル)名の文字列に辞書内のキー(YJxxxxx)が見つかった時
+            new_file_base = d_val   # フォルダ作成のため、対応する値(YYmmddHHMM)を保管
+            new_file = org_file.replace(d_key, d_val)   # 新ファイル名は YJxxxxx から YYmmddHHMM に置き換える
 
     #コピー元とコピー先のパス名を生成
     org_file_path = os.path.join(current_path, org_file)

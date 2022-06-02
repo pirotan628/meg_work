@@ -200,12 +200,12 @@ for file_path in all_file_list:
             new_file = file_path.replace(d_key, d_val)   # YJxxxxx から YYmmddHHMM に置き換え
 
     #コピー元とコピー先のパス名を生成
-    org_file = os.path.join(current_path, file_path)
-    new_file_path = os.path.join(dest_path,new_file_base,new_file)
+    org_file_path = os.path.join(current_path, file_path)
+    new_file_path = os.path.join(dest_path, new_file_base, new_file)
 
-    sentence = org_file + " --> " + new_file_path    # 表示用の文字列を作成
+    sentence = org_file_path + " --> " + new_file_path    # 表示用の文字列を作成
 
     if  yes_to_copy:                     # コピーがyesなら
-        copy_new(org_file, new_file_path, sentence)  # 新しいファイルだけコピー（上の関数）
+        copy_new(org_file_path, new_file_path, sentence)  # 新しいファイルだけコピー（上の関数）
     else:
         print("No copy: " + sentence)    # コピーがNoなら、コピーしない旨を表示

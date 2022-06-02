@@ -77,6 +77,7 @@ def yes_no_input():
 #        header.append(''.join(rawdata[4:7]))                               # date-id
 #        header.append('-'.join(rawdata[4:7])+' '+':'.join(rawdata[7:10]))  # date_time         
 #        header.append(base_name)                                          # file-name
+#        header.append(''.join(rawdata[4:7])+''.join(rawdata[7:9]))         # new-filename
 #
 #    return header
 

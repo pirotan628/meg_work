@@ -33,8 +33,9 @@ def yes_no_input():
             return True
         elif choice in ['n', 'no']:
             return False
-
+#############################
 # EEGのヘッダーを読む関数
+#############################
 #def readeeg(filepath):
 #    eeg_order = [8,2,6,16,8,8,8,8,4,2,2,2,2,2]   # EEG file structure
 #    eeg_use   = [1,0,0, 0,1,0,1,0,1,1,1,1,1,1]   # Bit for data will be used
@@ -80,19 +81,19 @@ def yes_no_input():
 #
 #    return header
 
+#############################
 # LOGのヘッダーを読む関数
+#############################
 def readlog(filepath):
     log_order = [8,2,6,8,8,16,8,8,4,2,2,2,2,2]   # Log file structure
     log_use   = [1,0,0,1,0, 0,1,0,1,1,1,1,1,1]   # Bit for data will be used
-# "orid", "dateid", "date_time", "hashid", "card_id", "inst", "org_file"
-#    orid = "OR-xxx"
+
     basename_wo_ext = os.path.splitext(os.path.basename(filepath))[0]  # Get hash characters
     base_name=(Path(file_path).name)
     with open(filepath, 'rb') as f:       # Open a file
         error_flag = 0
         print("Loading " + filepath)
         rawdata = []
-#        rawdata.append(orid)              # [OR-****]
         rawdata.append(basename_wo_ext)   # [OR-****, CJ******]
         count = 0                         # Counter for bit
         for length in log_order:
@@ -181,9 +182,9 @@ else:
 
 
 # csvの表から名前変換用の辞書を作る
-l_1d_key = df['idname'].to_numpy().tolist()  # キー(YJxxxxx)のリスト
+l_1d_key = df['idname'].to_numpy().tolist()        # キー(YJxxxxx)のリスト
 l_1d_val = df['new_filename'].to_numpy().tolist()  # 値(YYmmddHHMM)のリスト
-dict_name = dict(zip(l_1d_key, l_1d_val))    # 2つのリストから辞書を作成
+dict_name = dict(zip(l_1d_key, l_1d_val))          # 2つのリストから辞書を作成
 
 print(dict_name)
 
@@ -204,8 +205,10 @@ for file_path in all_file_list:
     #コピー元とコピー先のパス名を生成
     org_file = os.path.join(current_path, file_path)
     new_file_path = os.path.join(dest_path,new_file_base,new_file)
-    sentence = org_file + " --> " + new_file_path
-    if  yes_to_copy:
-        copy_new(org_file, new_file_path, sentence)
+
+    sentence = org_file + " --> " + new_file_path    # 表示用の文字列を作成
+
+    if  yes_to_copy:                     # コピーがyesなら
+        copy_new(org_file, new_file_path, sentence)  # 新しいファイルだけコピー（上の関数）
     else:
-        print("No copy: " + org_file + " -> " + new_file_path)
+        print("No copy: " + sentence)    # コピーがNoなら、コピーしない旨を表示

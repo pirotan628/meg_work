@@ -190,8 +190,8 @@ for file_path in all_file_list:
     new_file_path = os.path.join(dest_path,new_file_base,new_file)
 
     if os.path.isfile(org_file) and yes_to_copy:    # Process if it is a file (except directory).
-        if not(os.path.isfile(new_file_path)):      # If file does't exist in destination
-            print(org_file + " --> " + new_file_path)
+        if not os.path.exists(new_file_path):        # If file does't exist in destination
+            print("Copy: " + org_file + " --> " + new_file_path)
             os.makedirs(os.path.dirname(new_file_path), exist_ok=True)         # Make directories for new files
             shutil.copy2(org_file, new_file_path)                               # Copy file
         else:                                       # If file exists

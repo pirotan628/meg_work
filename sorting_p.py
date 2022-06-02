@@ -8,9 +8,25 @@ import re     # 正規表現扱う（条件指定など）
 import shutil # ファイル操作する
 from pathlib import Path
 #import itertools
+import sys
 
 
-def yes_no_input():    # Function for YES/NO input.
+#############################
+# 新しいファイルだけコピーする関数
+#############################
+def copy_new(source, destination, sentence):
+    os.makedirs(os.path.dirname(destination), exist_ok=True)         # Make directories for new files
+        
+    if os.path.isfile(source) and (not os.path.exists(destination)):    # Process if it is a file (except directory) and new.
+        shutil.copy2(source, destination)                               # Copy file
+        sys.stderr.write(("Copy:" + sentence +'\n'))
+    else:
+        sys.stderr.write(("File exists:" + sentence +'\n'))
+
+#############################
+# YES/NO input. の関数
+#############################
+def yes_no_input():
     while True:
         choice = input("Do you want to make a copies? [y/N]: ").lower()
         if choice in ['y', 'ye', 'yes']:
@@ -188,13 +204,8 @@ for file_path in all_file_list:
     #コピー元とコピー先のパス名を生成
     org_file = os.path.join(current_path, file_path)
     new_file_path = os.path.join(dest_path,new_file_base,new_file)
-
-    if os.path.isfile(org_file) and yes_to_copy:    # Process if it is a file (except directory).
-        if not os.path.exists(new_file_path):        # If file does't exist in destination
-            print("Copy: " + org_file + " --> " + new_file_path)
-            os.makedirs(os.path.dirname(new_file_path), exist_ok=True)         # Make directories for new files
-            shutil.copy2(org_file, new_file_path)                               # Copy file
-        else:                                       # If file exists
-            print("File exists: " + new_file_path)
-    elif os.path.isfile(org_file):
+    sentence = org_file + " --> " + new_file_path
+    if  yes_to_copy:
+        copy_new(org_file, new_file_path, sentence)
+    else:
         print("No copy: " + org_file + " -> " + new_file_path)

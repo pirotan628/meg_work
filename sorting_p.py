@@ -192,7 +192,7 @@ yes_to_copy = yes_no_input()      # Yes/No でコピーするか決めたい時,
 # 名前を変えたいファイルを探す
 # 全部のファイルのリストは既に持っている。
 # それは all_file_list である
-new_file_base = "Unknown"        #LOGファイルが無いやつに対する防御
+new_file_base = "Unknown"        #LOGファイルが無いやつに対する防御 
 for org_file in all_file_list:   #ファイルを総当たり
     new_file = org_file          #LOGファイルが無いやつに対する防御
     for d_key, d_val in dict_name.items():  # 辞書内の YJxxxxx, YYmmddHHMM を総当たり

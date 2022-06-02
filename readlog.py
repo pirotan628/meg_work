@@ -1,29 +1,44 @@
-import glob
-import os
-import struct
-import pandas as pd
-from datetime import timedelta
-import re
-import shutil
+# 外部モジュールのインポート
+# import [モジュール名]
+# as [ニックネーム(任意)]
+# from [package] import [module] 特定の関数しか使わない時
+import glob   # ファイル検索する
+import os     # OSの機能使う
+import struct # バイナリファイル扱う
+import pandas as pd  # データベース扱う
+from datetime import timedelta  # 日付時刻データ扱う
+import re     # 正規表現扱う（条件指定など）
+import shutil # ファイル操作する
 
 ###############################
 # Read log file
 ###############################
-osep = os.sep
+osep = os.sep  # OSごとに異なるPATHの区切り文字を取得
+# Windows の場合は"¥"か"\"が得られる
+# Mac / Linuxだと"/"
 
-orids = []
+orids = []  # 変数宣言（予約）
+# orids には"OR"で始まる（下で定義）フォルダのリストが格納される
+# @@@@@@ ここは変える必要あり
 orids = glob.glob("OR*")  # Get parent folder names (OR-**) represent trialists.
+# @@@@@@
 
 log_order = [8,40,8,8,4,2,2,2,2,2]   # Log file structure
 log_use   = [1, 0,1,0,1,1,1,1,1,1]   # Bit for data will be used
 
+# CSVファイルに書き出すデータ構造を作成（とりま空っぽ）
 df = pd.DataFrame(data=None, index=None, columns=["orid", "dateid", "date_time", "hashid", "card_id", "inst", "org_file"], dtype=str)
 
+print(orids)
+# len(orids)はORのつくフォルダの数
 for n_orid in range(len(orids)):  # Process each trialist individually
-    orid = orids[n_orid]
-    logfiles = []
+    orid = orids[n_orid] #n_orid番目の"OR"フォルダ名
+    logfiles = [] # 変数宣言（予約）= リスト
+    # ["ORxxxx" + "¥" + "**" + "¥" + "*.LOG"]
+    # ORxxxxというフォルダの下の任意のフォルダ(**)の下の.LOGファイルを探す
+    # recursive=True 下層のフォルダまで繰り返す
     logfiles = glob.glob(orid + osep + "**" + osep + "*.LOG", recursive=True)  # Get all LOG files
-
+    print(logfiles)
     
     for n_log in range(len(logfiles)):    # Process each file
         filepath = logfiles[n_log]        # get each file path
@@ -103,13 +118,17 @@ print(result)
 #############################
 # Convert file names
 #############################
+# 自分(readlog.py)のいるディレクトリと並列の階層に"PROC"ディレクトリを作成する
+# そのために、PROCディレクトリのパス名を作成する
 current_path = os.getcwd()
 parent_path = os.path.dirname(current_path)
 dist_path = parent_path + osep + "PROC"
 
 if os.path.exists(dist_path):
+    # もしPROCが既に存在したら、メッセージを出すだけ
     print(dist_path + " is already exists.")
 else:
+    # PROCを作成
     os.mkdir(dist_path)
     print("Created " + dist_path)
 
@@ -160,6 +179,9 @@ if yes_no_input():
         org = current_path + osep + str(convert_table.iloc[i,0])  # Original file path
         dist = dist_path + osep + str(convert_table.iloc[i, 1])   # New file path
         os.makedirs(os.path.dirname(dist), exist_ok=True)         # Make directories for new files
-        if os.path.isfile(org):                                   # Process if it is a file (except directory).
+        print(org + " -> " + dist + " [" + str(i) +"/"+ str(file_num) +" ("+format(progress, '5.1f')+"%)" + "]", end="")
+        if os.path.isfile(org) and (not os.path.exists(dist)):    # Process if it is a file (except directory) and new.
             shutil.copy2(org, dist)                               # Copy file
-            print(org + " -> " + dist + " [" + str(i) +"/"+ str(file_num) +" ("+format(progress, '5.1f')+"%)" + "]")
+            print(" copied.")
+        else:
+            print(" passed.")

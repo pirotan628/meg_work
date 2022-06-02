@@ -195,10 +195,10 @@ yes_to_copy = yes_no_input()      # Yes/No でコピーするか決めたい時,
 for file_path in all_file_list:   
     # 辞書の中から、csvファイルのidnameのカラムに該当するファイルを探す
     new_file=file_path
-    for x, y in dict_name.items():
-        if x in file_path:      # YJxxxxx から YYmmddHHMM を探しあてる
-            new_file_base = y   # フォルダ作成のため YYmmddHHMM を保管
-            new_file = new_file.replace(x, y)   # YJxxxxx から YYmmddHHMM に置き換え
+    for d_key, d_val in dict_name.items():  # 辞書内の YJxxxxx, YYmmddHHMM を総当たり
+        if d_key in file_path:      # YJxxxxx から YYmmddHHMM を探しあてる
+            new_file_base = d_val   # フォルダ作成のため YYmmddHHMM を保管
+            new_file = new_file.replace(d_key, d_val)   # YJxxxxx から YYmmddHHMM に置き換え
 
     #コピー元とコピー先のパス名を生成
     org_file = os.path.join(current_path, file_path)

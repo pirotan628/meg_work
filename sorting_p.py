@@ -89,7 +89,7 @@ def readlog(filepath):
     log_use   = [1,0,0,1,0, 0,1,0,1,1,1,1,1,1]   # Bit for data will be used
 
     basename_wo_ext = os.path.splitext(os.path.basename(filepath))[0]  # Get hash characters
-    base_name=(Path(file_path).name)
+    base_name=(Path(filepath).name)
     with open(filepath, 'rb') as f:       # Open a file
         error_flag = 0
         print("Loading " + filepath)

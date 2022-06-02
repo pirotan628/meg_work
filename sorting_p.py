@@ -1,4 +1,3 @@
-#from glob import glob   # ファイル検索する
 import glob   # ファイル検索する
 import os     # OSの機能使う
 import struct # バイナリファイル扱う
@@ -7,7 +6,6 @@ from datetime import timedelta  # 日付時刻データ扱う
 import re     # 正規表現扱う（条件指定など）
 import shutil # ファイル操作する
 from pathlib import Path
-#import itertools
 import sys
 
 
@@ -33,6 +31,7 @@ def yes_no_input():
             return True
         elif choice in ['n', 'no']:
             return False
+
 #############################
 # EEGのヘッダーを読む関数
 #############################
@@ -132,9 +131,8 @@ def readlog(filepath):
 ###########################
 # MAIN
 ###########################
-#orids = []  # 変数宣言（予約）
-
 # CSVファイルの構成
+# Pandas DataFrame を使う
 df = pd.DataFrame(data=None, index=None, columns=["idname", "inst", "hashid", "card_id", "date-id", "date-time","filename", "new_filename"], dtype=str)
 
 # 置いたところ以下全部調査

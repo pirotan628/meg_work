@@ -94,7 +94,7 @@ print(df)
 ofilename = basename + "_1-line.csv"
 df.to_csv(ofilename, index=False)
 
-# 最終行に平均解答時間を追記
+# 最終行に平均解答時間と正答率を追記
 f = open(ofilename,'a')
 f.write(",,"+str(avg_time)+","+str(car))
 f.close()

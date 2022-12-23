@@ -11,13 +11,25 @@ import os
 
 
 #-----------------------------------
+# wavファイル名から余分な文字消去する関数
 def GetCodeFromWav(wavname):
-     raw = wavname.replace(".wav", "")
-     raw = raw[:-1]
-     token = raw.split('_')
-     code = token[1]
+     raw = wavname.replace(".wav", "") #拡張子消す
+     raw = raw[:-1]  #最後尾は数字なので消す
+     token = raw.split('_')  #"_"で文字列を分割
+     code = token[1]  #"_"で区切られた後ろだけ抽出
 #     print(code)
      return code
+#-----------------------------------
+
+#-----------------------------------
+# 回答に正解が含まれるか判定する関数
+def CheckAns(sound,ans):
+     if sound in ans:
+         result = 1
+     else:
+         result = 0
+
+     return result
 #-----------------------------------
 
 
@@ -55,13 +67,26 @@ for j in range(len(rows_L)):
 df = pd.DataFrame(rows)
 df = df.drop(columns=[0,2,3])
 
+# wavファイル名から余分な文字消去
+df.loc[:,1] = df.loc[:,1].apply(GetCodeFromWav)
+
+# シャープの文字がバラバラ!!なのを統一する
+df.loc[:,4] = df.loc[:,4].replace("♯","#", regex=True)
+
+# 正答率計算
+# 正当判定 (CAR; Correct answer rate)
+for n in range(len(df.index)):
+     df.loc[n,6]=CheckAns(df.loc[n,1], df.loc[n,4])
+
+df.loc[:,6] = df.loc[:,6].astype(float)  #文字型を数値型に
+car = df.loc[:,6].mean() * 100
+print("Correct answer rate: ", car)
+
 # 平均解答時間の算出
-df.loc[:,5] = df.loc[:,5].astype(float)
+df.loc[:,5] = df.loc[:,5].astype(float)  #文字型を数値型に
 avg_time = df.loc[:,5].mean()
 print("ANS avg. time: ",avg_time)
 
-# wavファイル名から余分な文字消去
-df.loc[:,1] = df.loc[:,1].apply(GetCodeFromWav)
 
 print(df)
 
@@ -71,5 +96,5 @@ df.to_csv(ofilename, index=False)
 
 # 最終行に平均解答時間を追記
 f = open(ofilename,'a')
-f.write(",,"+str(avg_time))
+f.write(",,"+str(avg_time)+","+str(car))
 f.close()

@@ -8,7 +8,7 @@ filename = sys.argv[1]
 basename = os.path.splitext(os.path.basename(filename))[0]
 print(basename)
 
-rows_L = []  # 奇数行用のリスト（左側）()
+rows_L = []  # 奇数行用のリスト（左側）
 rows_R = []  # 偶数行用のリスト（右側）
 i = 0
 with open(filename, "r", encoding='shift_jis') as f:
@@ -39,7 +39,7 @@ df = pd.DataFrame(rows)
 df = df.drop(columns=[0,2,3])
 print(df)
 
-# 解答平均時間の算出
+# 平均解答時間の算出
 df.loc[:,5] = df.loc[:,5].astype(float)
 avg_time = df.loc[:,5].mean()
 print("ANS avg. time: ",avg_time)
@@ -48,6 +48,7 @@ print("ANS avg. time: ",avg_time)
 ofilename = basename + "_1-line.csv"
 df.to_csv(ofilename, index=False)
 
+# 最終行に平均解答時間を追記
 f = open(ofilename,'a')
 f.write(",,"+str(avg_time))
 f.close()

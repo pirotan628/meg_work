@@ -2,11 +2,13 @@ import sys
 import csv
 #import io
 import pandas as pd
+import os
 
 filename = sys.argv[1]
-print(filename)
+basename = os.path.splitext(os.path.basename(filename))[0]
+print(basename)
 
-rows_L = []  # 奇数行用のリスト（左側）
+rows_L = []  # 奇数行用のリスト（左側）()
 rows_R = []  # 偶数行用のリスト（右側）
 i = 0
 with open(filename, "r", encoding='shift_jis') as f:
@@ -35,7 +37,8 @@ df = pd.DataFrame(rows)
 df = df.drop(columns=[0,2,3])
 print(df)
 
-df.to_csv('ouput_test.csv')
+ofilename = basename + "_1-line.csv"
+df.to_csv(ofilename)
 
 df.loc[:,5] = df.loc[:,5].astype(float)
 avg_time = df.loc[:,5].mean()

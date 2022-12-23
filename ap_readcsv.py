@@ -4,6 +4,18 @@ import csv
 import pandas as pd
 import os
 
+
+#-----------------------------------
+def GetCodeFromWav(wavname):
+     raw = wavname.replace(".wav", "")
+     raw = raw[:-1]
+     token = raw.split('_')
+     code = token[1]
+#     print(code)
+     return code
+#-----------------------------------
+
+
 filename = sys.argv[1]
 basename = os.path.splitext(os.path.basename(filename))[0]
 print(basename)
@@ -37,12 +49,16 @@ for j in range(len(rows_L)):
 # pandas DataFrameへ変換
 df = pd.DataFrame(rows)
 df = df.drop(columns=[0,2,3])
-print(df)
 
 # 平均解答時間の算出
 df.loc[:,5] = df.loc[:,5].astype(float)
 avg_time = df.loc[:,5].mean()
 print("ANS avg. time: ",avg_time)
+
+# wavファイル名から余分な文字消去
+df.loc[:,1] = df.loc[:,1].apply(GetCodeFromWav)
+
+print(df)
 
 # CSVファイルに書き出し
 ofilename = basename + "_1-line.csv"

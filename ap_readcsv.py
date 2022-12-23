@@ -1,3 +1,8 @@
+#  使い方：
+#  python3 ap_readcsv.py [csvファイル名]
+#  [csvファイル名]は"data/Nanashi.csv"とかパス入りもOK
+# Nanashi_1-line.csv が変換後
+
 import sys
 import csv
 #import io

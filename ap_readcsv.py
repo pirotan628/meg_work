@@ -21,6 +21,8 @@ with open(filename, "r", encoding='shift_jis') as f:
             else:            # 奇数行
                 rows_R.append(row)
 
+f.close()
+
 #print(rows_L)
 #print(rows_R)
 
@@ -37,10 +39,15 @@ df = pd.DataFrame(rows)
 df = df.drop(columns=[0,2,3])
 print(df)
 
-ofilename = basename + "_1-line.csv"
-df.to_csv(ofilename)
-
+# 解答平均時間の算出
 df.loc[:,5] = df.loc[:,5].astype(float)
 avg_time = df.loc[:,5].mean()
-
 print("ANS avg. time: ",avg_time)
+
+# CSVファイルに書き出し
+ofilename = basename + "_1-line.csv"
+df.to_csv(ofilename, index=False)
+
+f = open(ofilename,'a')
+f.write(",,"+str(avg_time))
+f.close()

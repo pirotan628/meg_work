@@ -5,14 +5,15 @@
 
 import sys
 import csv
-#import io
 import pandas as pd
 import os
-
 
 #-----------------------------------
 # wavファイル名から余分な文字消去する関数
 def GetCodeFromWav(wavname):
+     if wavname == "":
+        return wavname
+
      raw = wavname.replace(".wav", "") #拡張子消す
      raw = raw[:-1]  #最後尾は数字なので消す
      token = raw.split('_')  #"_"で文字列を分割
@@ -32,36 +33,37 @@ def CheckAns(sound,ans):
      return result
 #-----------------------------------
 
-
 filename = sys.argv[1]
 basename = os.path.splitext(os.path.basename(filename))[0]
 print(basename)
 
-rows_L = []  # 奇数行用のリスト（左側）
-rows_R = []  # 偶数行用のリスト（右側）
-i = 0
+rows_play = []   # play用のリスト（左側）
+rows_click = []  # click用のリスト（右側）
+play = False
+
+row_click_null = ["no-click","",'nan']  #ダミーの不正解クリック
+
 with open(filename, "r", encoding='shift_jis') as f:
-    reader = csv.reader(f)
-    for row in reader:
-        if row != []:
-            i += 1
-            if (i % 2) > 0:  # 偶数行
-                rows_L.append(row)
-            else:            # 奇数行
-                rows_R.append(row)
+    reader = csv.reader(f)  #CSVを読んでリストのリストを得る[[row='a','b',,,'z'],[row],[row],,,[row]]
+    for row in reader:  #1行ずつCSVを処理する
+        if row != []:  #空白行は無視
+            if row[0]=="play":    #play行の処理
+                 rows_play.append(row)   #play内容を追記
+                 if play==True: #一個前がplayだった場合（clickされてない）
+                    rows_click.append(row_click_null) #ダミー（不正解クリック）を追記
+                 play = True  #playされたフラグ
+            elif row[0]=="click": #click行の処理
+                 if play==False:  #1個前が再生されてない（連続クリック）場合
+                    rows_click.pop(-1)  #前回を消す
+                 rows_click.append(row) #最新のクリック結果を追記
+                 play = False   #clickのフラグ（1-playの終了）
 
 f.close()
 
-#print(rows_L)
-#print(rows_R)
-
 # 2次元配列の結合
-row_ex = []
-rows = []
-for j in range(len(rows_L)):
-   row_ex = rows_L[j]
-   row_ex.extend(rows_R[j])
-   rows.append(row_ex)
+rows = rows_play
+for j in range(len(rows)):
+    rows[j].extend(rows_click[j])
 
 # pandas DataFrameへ変換
 df = pd.DataFrame(rows)
@@ -74,21 +76,19 @@ df.loc[:,1] = df.loc[:,1].apply(GetCodeFromWav)
 df.loc[:,4] = df.loc[:,4].replace("♯","#", regex=True)
 
 # 正答率計算
-# 正当判定 (CAR; Correct answer rate)
-for n in range(len(df.index)):
+for n in range(len(df.index)): #正答判定 (CAR; Correct answer rate)
      df.loc[n,6]=CheckAns(df.loc[n,1], df.loc[n,4])
 
 df.loc[:,6] = df.loc[:,6].astype(float)  #文字型を数値型に
-car = df.loc[:,6].mean() * 100
-print("Correct answer rate: ", car)
+car = df.loc[:,6].mean() * 100   #正答率(%)
 
 # 平均解答時間の算出
 df.loc[:,5] = df.loc[:,5].astype(float)  #文字型を数値型に
 avg_time = df.loc[:,5].mean()
-print("ANS avg. time: ",avg_time)
-
 
 print(df)
+print("Correct answer rate: ", car)
+print("ANS avg. time: ",avg_time)
 
 # CSVファイルに書き出し
 ofilename = basename + "_1-line.csv"

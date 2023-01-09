@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta, timezone
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,6 +9,7 @@ import codecs
 
 JST = timezone(timedelta(hours=+9), 'JST')
 
+#os.joinで何とかする
 path_e4 = 'E4'
 
 #------------ACC------------
@@ -136,4 +138,5 @@ ax4.legend(loc='upper right',fontsize=10)
 ax5.legend(loc='upper right',fontsize=10)
 ax6.legend(loc='upper right',fontsize=10)
 
+#パス変更 pngfile
 plt.savefig('e4.png', dpi=200, bbox_inches="tight", pad_inches=0.1)

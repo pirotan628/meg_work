@@ -7,6 +7,15 @@ import matplotlib.dates as md
 import glob
 import os
 
+#これ以下全部を try: except: に入れると全てのエラー無視する
+#
+#try:
+#   [all program]
+#
+#except:
+#   pass
+
+
 JST = timezone(timedelta(hours=+9), 'JST')
 
 dirlist = glob.glob("EPW*")

@@ -93,9 +93,10 @@ def read_single_val(header):
 def main_routine():
     global path_e4
 
-    dirlist = glob.glob("EPW*")
+    dirlist = glob.glob("Epw*")
     dirlist += glob.glob("epw*")
-
+    dirlist += glob.glob("EPW*")
+    
     print(dirlist)
 
     for dirname in dirlist:

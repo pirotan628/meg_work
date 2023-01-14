@@ -100,18 +100,32 @@ def main_routine():
 
     for dirname in dirlist:
         path_e4 = os.path.join(dirname,'E4')
+        
+        pngbase = dirname + "_e4.png"
+        pngfile = os.path.join(dirname, pngbase)
+
         if os.path.exists(path_e4) == False:
             print(dirname, " doesn't have E4 directory.")
             continue
+        #--------------------------------------
+        #グラフを全部描き直す時はこのブロックをコメントアウト
+        if os.path.exists(pngfile):
+            print(pngfile, " already exists.")
+            continue
+        #--------------------------------------
 
         print("Processing ", path_e4)
 
-        df_acc = read_3d_val("ACC_*")
-        df_bvp = read_single_val("BVP_*")
-        df_eda = read_single_val("EDA_*")
-        df_hr = read_single_val("HR_*")
-        df_ibi = read_single_val("IBI_*")
-        df_tp = read_single_val("TEMP_*")
+        try:
+            df_acc = read_3d_val("ACC_*")
+            df_bvp = read_single_val("BVP_*")
+            df_eda = read_single_val("EDA_*")
+            df_hr = read_single_val("HR_*")
+            df_ibi = read_single_val("IBI_*")
+            df_tp = read_single_val("TEMP_*")
+        except:
+            print("Exception: Something bad.")
+            continue
 
         print(df_acc)
         print(df_bvp)
@@ -172,8 +186,6 @@ def main_routine():
         ax6.legend(loc='upper right',fontsize=10)
 
 #    パス変更 pngfile
-        pngbase = dirname + "_e4.png"
-        pngfile = os.path.join(dirname, pngbase)
         plt.savefig(pngfile, dpi=200, bbox_inches="tight", pad_inches=0.1)
 
 if __name__ == "__main__": 

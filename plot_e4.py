@@ -18,7 +18,7 @@ path_e4 = ""
 def read_3d_val(header):
     global path_e4
 
-    acc_csvs = []
+    csvs = []
     search_path = os.path.join(path_e4, header)
     csvs = glob.glob(search_path)
 
@@ -101,8 +101,10 @@ def main_routine():
     for dirname in dirlist:
         path_e4 = os.path.join(dirname,'E4')
         if os.path.exists(path_e4) == False:
-            print(dirname, "doesn't have E4 directory.")
+            print(dirname, " doesn't have E4 directory.")
             continue
+
+        print("Processing ", path_e4)
 
         df_acc = read_3d_val("ACC_*")
         df_bvp = read_single_val("BVP_*")
@@ -131,12 +133,6 @@ def main_routine():
 # Maximum Window
         xmin = min([df_acc.index[0], df_bvp.index[0], df_eda.index[0], df_hr.index[0], df_ibi.index[0], df_tp.index[0]])
         xmax = max([df_acc.index[len(df_acc)-1], df_bvp.index[len(df_bvp)-1], df_eda.index[len(df_eda)-1], df_hr.index[len(df_hr)-1], df_ibi.index[len(df_ibi)-1], df_tp.index[len(df_tp)-1]])
-#        Minimum Window
-#        xmin = max([df.index[0], df1.index[0], df2.index[0]])
-#        xmax = min([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
-#        Hart Rate Window
-#        xmin = df.index[0]
-#        xmax = df.index[len(df)-1]
 
         for a in [ax1,ax2, ax3, ax4, ax5, ax6]:
             a.xaxis.set_major_formatter(md.DateFormatter('%d-%b'))
@@ -179,7 +175,6 @@ def main_routine():
         pngbase = dirname + "_e4.png"
         pngfile = os.path.join(dirname, pngbase)
         plt.savefig(pngfile, dpi=200, bbox_inches="tight", pad_inches=0.1)
-#        plt.savefig('e4.png', dpi=200, bbox_inches="tight", pad_inches=0.1)
 
 if __name__ == "__main__": 
     main_routine() 

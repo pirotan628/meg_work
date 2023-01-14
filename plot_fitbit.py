@@ -19,6 +19,7 @@ import os
 JST = timezone(timedelta(hours=+9), 'JST')
 
 dirlist = glob.glob("EPW*")
+dirlist += glob.glob("epw*")
 
 print(dirlist)
 
@@ -186,5 +187,6 @@ for dirname in dirlist:
    h2, l2 = ax3a.get_legend_handles_labels()
    ax3a.legend(h1+h2, l1+l2, loc='upper right',fontsize=12)
 
-   pngfile = os.path.join(dirname, 'fitbit.png')
+   pngbase = dirname + "_fitbit.png"
+   pngfile = os.path.join(dirname, pngbase)
    plt.savefig(pngfile, dpi=200, bbox_inches="tight", pad_inches=0.1)

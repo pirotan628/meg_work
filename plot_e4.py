@@ -9,28 +9,39 @@ import codecs
 
 JST = timezone(timedelta(hours=+9), 'JST')
 
+RED = '\033[31m'
+END = '\033[0m'
+
 #os.joinで何とかする
-path_e4 = 'E4'
+#path_e4 = 'E4'
 
 #------------ACC------------
 def read_3d_val(header):
 
     acc_csvs = []
     search_path = os.path.join(path_e4, header)
-    acc_csvs = glob.glob(search_path)
+    csvs = glob.glob(search_path)
 
-    dt_list = []
-    val_list = []
+#    dt_list = []
+#    val_list = []
     j=0
-    for acc_csv in acc_csvs:
-        j = j + 1
-        print(acc_csv)
-        with codecs.open(acc_csv, "r", "UTF-8", "ignore") as f:
-            df_tmp = pd.read_table(f, delimiter=',', header=1, names = ("datetime","x","y","z","dt2"))
-        if j == 1:
-            df_acc = df_tmp
-        else:
-            df_acc = pd.concat([df_acc, df_tmp], ignore_index=False)
+    for csv in csvs:
+        print(csv)
+
+        try:
+            with codecs.open(csv, "r", "UTF-8", "ignore") as f:
+                df_tmp = pd.read_table(f, delimiter=',', header=1, names = ("datetime","x","y","z","dt2"))
+            if j == 0:
+                df_acc = df_tmp
+            else:
+                df_acc = pd.concat([df_acc, df_tmp], ignore_index=False)
+
+            j = j + 1
+
+        except:
+            print(RED + "READ ERROR: " + END , csv)
+            ef = open('list_readerror.txt', mode='a')
+            ef.write(csv + '\n')
 
     df_acc['datetime'] = pd.to_datetime(df_acc['datetime'])
     df_acc = df_acc.set_index('datetime', drop=True)
@@ -52,14 +63,22 @@ def read_single_val(header):
 
     j = 0
     for csv in csvs:
-        j = j + 1
         print(csv)
-        with codecs.open(csv, "r", "UTF-8", "ignore") as f:
-            df_tmp = pd.read_table(f, delimiter=',', header=1, names = ("datetime","val","dt2"))
-        if j == 1:
-            df = df_tmp
-        else:
-            df = pd.concat([df, df_tmp], ignore_index=False)
+        try:
+            with codecs.open(csv, "r", "UTF-8", "ignore") as f:
+                df_tmp = pd.read_table(f, delimiter=',', header=1, names = ("datetime","val","dt2"))
+            if j == 0:
+                df = df_tmp
+            else:
+                df = pd.concat([df, df_tmp], ignore_index=False)
+
+            j = j + 1
+
+        except:
+            print("READ ERROR: ", csv)
+            ef = open('list_readerror.txt', mode='a')
+            ef.write(csv + '\n')
+
 
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df.set_index('datetime', drop=True)
@@ -78,7 +97,6 @@ print(dirlist)
 
 for dirname in dirlist:
     path_e4 = os.path.join(dirname,'E4')
-
 
     df_acc = read_3d_val("ACC_*")
     df_bvp = read_single_val("BVP_*")

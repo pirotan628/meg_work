@@ -75,7 +75,7 @@ def read_single_val(header):
             j = j + 1
 
         except:
-            print("READ ERROR: ", csv)
+            print(RED + "READ ERROR: " + END , csv)
             ef = open('list_readerror.txt', mode='a')
             ef.write(csv + '\n')
 
@@ -124,7 +124,7 @@ def main_routine():
             df_ibi = read_single_val("IBI_*")
             df_tp = read_single_val("TEMP_*")
         except:
-            print("Exception: Something bad.")
+            print(RED + "Exception: Something bad." + END)
             continue
 
         print(df_acc)

@@ -145,10 +145,13 @@ def read_SpO2(search_path):
 
 def read_Sleep(search_path):
     keywords = ['data', 'shortData']
+    dic_level_val = {'deep':0, 'light':1, 'rem':2, 'wake':3, 'asleep':0, 'restless':1, 'awake':2}
     for k in range(len(keywords)):
         dt_list = []
         level_list = []
+        leval_list = []
         seconds_list = []
+        type_list = []
 
         slp_jsons = glob.glob(search_path)
 
@@ -156,22 +159,29 @@ def read_Sleep(search_path):
         jsonData = json.load(f)
 
         for i in range(len(jsonData)):
+            log_type = jsonData[i]['type']
             if keywords[k] not in jsonData[i]['levels']:
                 continue
 #            print(jsonData[i]['levels'][keywords[k]])
             for j in range(len(jsonData[i]['levels'][keywords[k]])):
                 dt = datetime.strptime(jsonData[i]['levels'][keywords[k]][j]['dateTime'], '%Y-%m-%dT%H:%M:%S.%f')
                 level = jsonData[i]['levels'][keywords[k]][j]['level']
+                level_val = dic_level_val[level]
                 seconds = int(jsonData[i]['levels'][keywords[k]][j]['seconds'])
+    
                 dt_list.append(dt)
                 level_list.append(level)
+                leval_list.append(level_val)
                 seconds_list.append(seconds)
+                type_list.append(log_type)
 
         df_dt = pd.DataFrame(data=dt_list, columns=['datetime'])
         df_level = pd.DataFrame(data=level_list, columns=['level'])
+        df_leval = pd.DataFrame(data=leval_list, columns=['level_val'])
         df_seconds = pd.DataFrame(data=seconds_list, columns=['seconds'])
+        df_type = pd.DataFrame(data=type_list, columns=['logtype'])
 
-        df = pd.concat([df_dt,df_level,df_seconds], ignore_index=False, axis=1)
+        df = pd.concat([df_dt,df_level,df_leval, df_seconds, df_type], ignore_index=False, axis=1)
         df = df.set_index('datetime', drop=True)
         df = df.sort_index()
         print(df)
@@ -217,12 +227,13 @@ def main_routine():
 #--------------------SpO2-----------------
             search_path = os.path.join(path_fitbit, path_SpO2, "estimated_oxygen_variation-*")
             df2 = read_SpO2(search_path)
-#--------------------Sleep-----------------
-            search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
-            df3, df4 = read_Sleep(search_path)
         except:
             print(RED + "Exception: Something bad." + END)
             continue
+
+#--------------------Sleep-----------------
+        search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
+        df3, df4 = read_Sleep(search_path)
 
 #--------------------Plot-----------------
 

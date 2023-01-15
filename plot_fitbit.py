@@ -143,11 +143,51 @@ def read_SpO2(search_path):
 
     return df2
 
+def read_Sleep(search_path):
+    keywords = ['data', 'shortData']
+    for k in range(len(keywords)):
+        dt_list = []
+        level_list = []
+        seconds_list = []
+
+        slp_jsons = glob.glob(search_path)
+
+        f = open(slp_jsons[0] ,'r')
+        jsonData = json.load(f)
+
+        for i in range(len(jsonData)):
+            if keywords[k] not in jsonData[i]['levels']:
+                continue
+#            print(jsonData[i]['levels'][keywords[k]])
+            for j in range(len(jsonData[i]['levels'][keywords[k]])):
+                dt = datetime.strptime(jsonData[i]['levels'][keywords[k]][j]['dateTime'], '%Y-%m-%dT%H:%M:%S.%f')
+                level = jsonData[i]['levels'][keywords[k]][j]['level']
+                seconds = int(jsonData[i]['levels'][keywords[k]][j]['seconds'])
+                dt_list.append(dt)
+                level_list.append(level)
+                seconds_list.append(seconds)
+
+        df_dt = pd.DataFrame(data=dt_list, columns=['datetime'])
+        df_level = pd.DataFrame(data=level_list, columns=['level'])
+        df_seconds = pd.DataFrame(data=seconds_list, columns=['seconds'])
+
+        df = pd.concat([df_dt,df_level,df_seconds], ignore_index=False, axis=1)
+        df = df.set_index('datetime', drop=True)
+        df = df.sort_index()
+        print(df)
+
+        if k == 0: df_data = df
+        if k == 1: df_short = df
+
+    return df_data, df_short
+
+
 def main_routine():
     global dt_list
 
     path_PhysAct = 'Physical Activity'
     path_SpO2 = 'Other'
+    path_Sleep = 'Sleep'
 
     for dirname in dirlist:
         pngbase = dirname + "_fitbit.png"
@@ -177,6 +217,9 @@ def main_routine():
 #--------------------SpO2-----------------
             search_path = os.path.join(path_fitbit, path_SpO2, "estimated_oxygen_variation-*")
             df2 = read_SpO2(search_path)
+#--------------------Sleep-----------------
+            search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
+            df3, df4 = read_Sleep(search_path)
         except:
             print(RED + "Exception: Something bad." + END)
             continue

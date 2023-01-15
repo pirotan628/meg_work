@@ -31,8 +31,6 @@ print(dirlist)
 
 #心拍データを読むサブルーチン
 def read_HeartRate(search_path):
-    global dt_list
-
     hr_jsons = []
     hr_jsons = glob.glob(search_path)
 
@@ -68,12 +66,11 @@ def read_HeartRate(search_path):
 
 #活動量を読むサブルーチン
 def read_Activity(search_path_base):
-    global dt_list
-
     j=0
     middlen = '_minutes'
     activ_min_f = []
     am_list = []
+    dt_list = []
 
     for activity in activities:
         j = j + 1
@@ -127,13 +124,9 @@ def conv_eov(x):
 
 #血中酸素濃度のデータを読むサブルーチン
 def read_SpO2(search_path):
-    global dt_list
-
     eov_csvs = []
     eov_csvs = glob.glob(search_path)
 
-    dt_list = []
-    R_list = []
     j=0
     for eov_csv in eov_csvs:
         j = j + 1
@@ -210,8 +203,6 @@ def read_Sleep(search_path):
 
 #メインルーチン
 def main_routine():
-    global dt_list
-
     for dirname in dirlist:        #[Epw****] を順に探索
         pngbase = dirname + "_fitbit.png"
         pngfile = os.path.join(dirname, pngbase)   #PNGファイルのフルパスを生成

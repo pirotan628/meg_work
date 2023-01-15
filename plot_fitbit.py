@@ -213,9 +213,9 @@ def main_routine():
             continue     #この被験者はパスして次の人に進む
         #--------------------------------------
         #グラフを全部描き直す時はこのブロックをコメントアウト
-        if os.path.exists(pngfile):     #既にグラフがある場合
-            print(pngfile, " already exists.")
-            continue   #この被験者はパスして次の人に進む
+        #if os.path.exists(pngfile):     #既にグラフがある場合
+        #    print(pngfile, " already exists.")
+        #    continue   #この被験者はパスして次の人に進む
         #--------------------------------------
 
         print("Processing ", path_fitbit)

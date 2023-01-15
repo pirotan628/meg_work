@@ -234,15 +234,18 @@ def main_routine():
 #--------------------Sleep-----------------
         search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
         df3, df4 = read_Sleep(search_path)
+        df5 = df3[df3['logtype']=='classic']
+        df3 = df3[df3['logtype']=='stages']
 
 #--------------------Plot-----------------
 
         fig = plt.figure(tight_layout=True, figsize=(12,10))
-        ax1 = fig.add_subplot(311, title='fitbit - [Heart rate]', ylabel='BPM')
-        ax2 = fig.add_subplot(312, title='fitbit - [Activity]', ylabel='min.')
-        ax3 = fig.add_subplot(313, title='fitbit - [Estimated Oxgen Val.]', ylabel='RAW ratio')
+        ax1 = fig.add_subplot(411, title='fitbit - [Heart rate]', ylabel='BPM')
+        ax2 = fig.add_subplot(412, title='fitbit - [Activity]', ylabel='min.')
+        ax3 = fig.add_subplot(413, title='fitbit - [Estimated Oxgen Val.]', ylabel='RAW ratio')
         ax3a = ax3.twinx()
         ax3a.set_ylabel('%')
+        ax4 = fig.add_subplot(414, title='fitbit - [Sleep]', ylabel='level')
 
         # Maximum Window
         xmin = min([df.index[0], df1.index[0], df2.index[0]])
@@ -269,6 +272,9 @@ def main_routine():
         ax3a.scatter(df2.index,df2['eov'], s=0.1, color='blue',label='EOV')
         ax3a.plot(df2.index,df2['m_eov'],'--',color='red',label='Mean_EOV')
        #ax3a.scatter(df2.index,df2['m_eov'], s=0.5, color='red',label='Mean_EOV')
+        ax4.scatter(df3.index, df3['level_val'], s=3, color='blue', label='stages-data')
+        ax4.scatter(df4.index, df4['level_val'], s=3, color='red', label='stages-short')
+        ax4.scatter(df5.index, df5['level_val'], s=3, color='green', label='classic')
 
         plt.gcf().autofmt_xdate()
 
@@ -278,6 +284,8 @@ def main_routine():
         h1, l1 = ax3.get_legend_handles_labels()
         h2, l2 = ax3a.get_legend_handles_labels()
         ax3a.legend(h1+h2, l1+l2, loc='upper right',fontsize=12)
+        
+        ax4.legend(loc='upper right', fontsize=12)
 
         plt.savefig(pngfile, dpi=200, bbox_inches="tight", pad_inches=0.1)
 

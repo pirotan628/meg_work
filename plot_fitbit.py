@@ -201,8 +201,12 @@ def read_Sleep(search_path):
 
         if k == 0: df_data = df
         if k == 1: df_short = df
+                
+    df_classic = df_data[df_data['logtype']=='classic']
+    df_data = df_data[df_data['logtype']=='stages']
 
-    return df_data, df_short
+
+    return df_data, df_short, df_classic
 
 #メインルーチン
 def main_routine():
@@ -238,9 +242,7 @@ def main_routine():
             df2 = read_SpO2(search_path)
 #--------------------Sleep-----------------
             search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
-            df3, df4 = read_Sleep(search_path)
-            df5 = df3[df3['logtype']=='classic']
-            df3 = df3[df3['logtype']=='stages']
+            df3, df4, df5 = read_Sleep(search_path)
         except:    #何かエラーが出てしまった場合
             print(RED + "Exception: Something bad." + END)
             continue  #この被験者はパスして次の人に進む
@@ -257,7 +259,7 @@ def main_routine():
 
         # Maximum Window
         xmin = min([df.index[0], df1.index[0], df2.index[0]])
-        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
+        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1], df3.index[len(df3)-1]])
         # Minimum Window
         #xmin = max([df.index[0], df1.index[0], df2.index[0]])
         #xmax = min([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
@@ -265,7 +267,7 @@ def main_routine():
         #xmin = df.index[0]
         #xmax = df.index[len(df)-1]
 
-        for a in [ax1,ax2, ax3, ax3a]:
+        for a in [ax1,ax2, ax3, ax3a,ax4]:
             a.xaxis.set_major_formatter(md.DateFormatter('%d-%b'))
             a.xaxis.set_major_locator(md.DayLocator(interval=2,tz=JST))
             a.xaxis.set_minor_locator(md.HourLocator(byhour=range(0,24,6),tz=JST))

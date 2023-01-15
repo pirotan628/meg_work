@@ -7,19 +7,29 @@ import matplotlib.dates as md
 import glob
 import os
 
+#赤文字表示に使う定数
 RED = '\033[31m'
 END = '\033[0m'
 
+#時刻データのための日本標準時定義
 JST = timezone(timedelta(hours=+9), 'JST')
 
+#検索用するフォルダのリスト
 dirlist = glob.glob("Epw*")
 dirlist += glob.glob("epw*")
 dirlist += glob.glob("EPW*")
 
+# 各データの保存先フォルダ
+path_PhysAct = 'Physical Activity'
+path_SpO2 = 'Other'
+path_Sleep = 'Sleep'
+
+#Activitiesフォルダのファイル名リスト
 activities = ['sedentary','lightly_active','moderately_active','very_active']
 
 print(dirlist)
 
+#心拍データを読むサブルーチン
 def read_HeartRate(search_path):
     global dt_list
 
@@ -56,6 +66,7 @@ def read_HeartRate(search_path):
 
     return df
 
+#活動量を読むサブルーチン
 def read_Activity(search_path_base):
     global dt_list
 
@@ -100,6 +111,7 @@ def read_Activity(search_path_base):
 
     return df1
 
+#fitbit3の独自データから血中酸素濃度を求める関数
 def conv_eov(x):
 
     result = x * (0.1) + 97  #formula from "fitbit forum (2020)"
@@ -113,7 +125,7 @@ def conv_eov(x):
 
     return result
 
-
+#血中酸素濃度のデータを読むサブルーチン
 def read_SpO2(search_path):
     global dt_list
 
@@ -143,6 +155,7 @@ def read_SpO2(search_path):
 
     return df2
 
+#睡眠データを読むサブルーチン
 def read_Sleep(search_path):
     keywords = ['data', 'shortData']
     dic_level_val = {'deep':0, 'light':1, 'rem':2, 'wake':3, 'asleep':0, 'restless':1, 'awake':2}
@@ -191,33 +204,29 @@ def read_Sleep(search_path):
 
     return df_data, df_short
 
-
+#メインルーチン
 def main_routine():
     global dt_list
 
-    path_PhysAct = 'Physical Activity'
-    path_SpO2 = 'Other'
-    path_Sleep = 'Sleep'
-
-    for dirname in dirlist:
+    for dirname in dirlist:        #[Epw****] を順に探索
         pngbase = dirname + "_fitbit.png"
-        pngfile = os.path.join(dirname, pngbase)
+        pngfile = os.path.join(dirname, pngbase)   #PNGファイルのフルパスを生成
+        
+        path_fitbit = os.path.join(dirname,'fitbit') #fitbitデータのある場所を検索
 
-        path_fitbit = os.path.join(dirname,'fitbit')
-
-        if os.path.exists(path_fitbit) == False:
+        if os.path.exists(path_fitbit) == False:  # "fitbit" フォルダが見つからない場合
             print(dirname, " doesn't have fitbit directory.")
-            continue
+            continue     #この被験者はパスして次の人に進む
         #--------------------------------------
         #グラフを全部描き直す時はこのブロックをコメントアウト
-        if os.path.exists(pngfile):
+        if os.path.exists(pngfile):     #既にグラフがある場合
             print(pngfile, " already exists.")
-            continue
+            continue   #この被験者はパスして次の人に進む
         #--------------------------------------
 
         print("Processing ", path_fitbit)
 
-        try:
+        try:  #データを読むサブルーチンを実行
 #--------------------Heart Rate-----------------
             search_path = os.path.join(path_fitbit, path_PhysAct, "heart_rate-*")
             df = read_HeartRate(search_path)
@@ -227,15 +236,14 @@ def main_routine():
 #--------------------SpO2-----------------
             search_path = os.path.join(path_fitbit, path_SpO2, "estimated_oxygen_variation-*")
             df2 = read_SpO2(search_path)
-        except:
-            print(RED + "Exception: Something bad." + END)
-            continue
-
 #--------------------Sleep-----------------
-        search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
-        df3, df4 = read_Sleep(search_path)
-        df5 = df3[df3['logtype']=='classic']
-        df3 = df3[df3['logtype']=='stages']
+            search_path = os.path.join(path_fitbit, path_Sleep, "sleep-*")
+            df3, df4 = read_Sleep(search_path)
+            df5 = df3[df3['logtype']=='classic']
+            df3 = df3[df3['logtype']=='stages']
+        except:    #何かエラーが出てしまった場合
+            print(RED + "Exception: Something bad." + END)
+            continue  #この被験者はパスして次の人に進む
 
 #--------------------Plot-----------------
 
@@ -289,6 +297,6 @@ def main_routine():
 
         plt.savefig(pngfile, dpi=200, bbox_inches="tight", pad_inches=0.1)
 
-
+#お約束（単独実行時にメインルーチンを実行）
 if __name__ == "__main__": 
     main_routine() 

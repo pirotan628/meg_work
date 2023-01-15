@@ -198,7 +198,6 @@ def read_Sleep(search_path):
     df_classic = df_data[df_data['logtype']=='classic']
     df_data = df_data[df_data['logtype']=='stages']
 
-
     return df_data, df_short, df_classic
 
 #メインルーチン
@@ -250,7 +249,8 @@ def main_routine():
 
         # Maximum Window
         xmin = min([df.index[0], df1.index[0], df2.index[0]])
-        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1], df3.index[len(df3)-1]])
+#        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1], df3.index[len(df3)-1]])
+        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
         # Minimum Window
         #xmin = max([df.index[0], df1.index[0], df2.index[0]])
         #xmax = min([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])

@@ -263,16 +263,19 @@ def main_routine():
         ax3a.set_ylabel('%')
         ax4 = fig.add_subplot(414, title='fitbit - [Sleep]', ylabel='level')
 
-        # Maximum Window
-        xmin = min([df.index[0], df1.index[0], df2.index[0]])
+    # Maximum Window
+#        xmin = min([df.index[0], df1.index[0], df2.index[0]])
 #        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1], df3.index[len(df3)-1]])
-        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
-        # Minimum Window
+#        xmax = max([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
+    # Minimum Window
         #xmin = max([df.index[0], df1.index[0], df2.index[0]])
         #xmax = min([df.index[len(df)-1], df1.index[len(df1)-1], df2.index[len(df2)-1]])
-        # Hart Rate Window
+    # Hart Rate Window
         #xmin = df.index[0]
         #xmax = df.index[len(df)-1]
+    # Activity Window
+        xmin = df1.index[0]
+        xmax = df1.index[len(df1)-1]
 
         for a in [ax1,ax2, ax3, ax3a,ax4]:
             a.xaxis.set_major_formatter(md.DateFormatter('%d-%b'))

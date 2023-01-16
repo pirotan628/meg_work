@@ -159,6 +159,19 @@ def read_SpO2(search_path):
 def read_Sleep(search_path):
     keywords = ['data', 'shortData']
     dic_level_val = {'deep':0, 'light':1, 'rem':2, 'wake':3, 'asleep':0, 'restless':1, 'awake':2}
+
+    slp_jsons = glob.glob(search_path)
+
+    #Sleepのjsonが無い場合
+    if slp_jsons == []:
+        cols = ['datetime','levels','level_val','seconds','logtype']
+        df = pd.DataFrame(index=[], columns=cols)
+        df.set_index('datetime', drop=True)
+        return df, df, df
+
+    f = open(slp_jsons[0] ,'r')
+    jsonData = json.load(f)
+
     for k in range(len(keywords)):
         dt_list = []
         level_list = []
@@ -166,10 +179,6 @@ def read_Sleep(search_path):
         seconds_list = []
         type_list = []
 
-        slp_jsons = glob.glob(search_path)
-
-        f = open(slp_jsons[0] ,'r')
-        jsonData = json.load(f)
 
         for i in range(len(jsonData)):
             log_type = jsonData[i]['type']
@@ -220,9 +229,9 @@ def main_routine():
             continue     #この被験者はパスして次の人に進む
         #--------------------------------------
         #グラフを全部描き直す時はこのブロックをコメントアウト
-        #if os.path.exists(pngfile):     #既にグラフがある場合
-        #    print(pngfile, " already exists.")
-        #    continue   #この被験者はパスして次の人に進む
+        if os.path.exists(pngfile):     #既にグラフがある場合
+            print(pngfile, " already exists.")
+            continue   #この被験者はパスして次の人に進む
         #--------------------------------------
 
         print("Processing ", path_fitbit)

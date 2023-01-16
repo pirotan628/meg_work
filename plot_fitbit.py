@@ -127,6 +127,13 @@ def read_SpO2(search_path):
     eov_csvs = []
     eov_csvs = glob.glob(search_path)
 
+    # Otherが存在しない場合の処理
+    if eov_csvs == []:
+        cols = ['timestamp','eov','m_eov']
+        df = pd.DataFrame(index=[], columns=cols)
+        df.set_index('timestamp', drop=True)
+        return df
+
     j=0
     for eov_csv in eov_csvs:
         j = j + 1

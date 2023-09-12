@@ -18,7 +18,7 @@ exts = [".bin", ".csv", ".edf"]
 
 for dirs in harudirs:
     dst = dirs.split(osep)[-1] # Hxxxx_xx_yyyymmddtttttt
-    ymd = dst.split(sep)[2] # yyyymmddtttttt
+    ymd = dst.split(sep)[-1] # yyyymmddtttttt
 
     fn_base = header + ymd + footer
     bin_fn = os.path.join(dir_fixed_root, fn_base + exts[0])
